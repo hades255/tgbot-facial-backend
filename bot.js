@@ -17,8 +17,8 @@ const { botInit } = require("./routes/bot");
 
 //  todo
 const dbURI =
-  "mongodb+srv://chaolongpiao:chaolong1995@cluster0.inglvcw.mongodb.net/tg_bot_facial";
-  // "mongodb://127.0.0.1:27017/facial";
+  // "mongodb+srv://chaolongpiao:chaolong1995@cluster0.inglvcw.mongodb.net/tg_bot_facial";
+  "mongodb://127.0.0.1:27017/facial";
 mongoose
   .connect(dbURI)
   .then(() => console.log("MongoDB connected"))
@@ -52,10 +52,10 @@ app.get("/battle", (req, res) => {
   );
 });
 
-const port = process.env.PORT || 3006;
+const port = process.env.PORT || 3004;
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
   //  todo
-  botInit();
+  // botInit();
 });

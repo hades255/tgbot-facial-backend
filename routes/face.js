@@ -68,16 +68,25 @@ router.post("/upload", upload.single("image"), async (req, res) => {
 router.post("/upload", upload.single("image"), async (req, res) => {
   try {
     const file = req.file;
-    console.log(file);
-    const isValidImage = true; //await verifyImage(file.path);
+    res.status(200).send({ message: "Image uploaded successfully", file });
+  } catch (error) {
+    res.status(500).send({ message: "Internal server error" });
+  }
+});
 
+router.get("/verify", async (req, res) => {
+  const { path } = req.query;
+  console.log(path);
+  try {
+    const isValidImage = await verifyImage(path);
     if (isValidImage) {
       res.status(200).send({ message: "Image verified successfully", file });
     } else {
       res.status(400).send({ message: "Invalid image, no face detected" });
     }
   } catch (error) {
-    res.status(500).send({ message: "Internal server error" });
+    console.log(error);
+    res.status(400).send(error.message);
   }
 });
 

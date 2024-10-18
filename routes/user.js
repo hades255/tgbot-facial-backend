@@ -39,7 +39,7 @@ router.get("/", async (req, res) => {
         name,
         username,
         avatar,
-        point: bonus,
+        point: bonus || 0,
       }).save();
     }
     res.json({ user, bonus });
@@ -54,6 +54,34 @@ router.get("/avatar", async (req, res) => {
   try {
     const data = await getAvatar(userId);
     res.json({ msg: "ok", data });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send(error.message);
+  }
+});
+
+router.post("/email", async (req, res) => {
+  const { userId } = req.query;
+  const { email } = req.body;
+  try {
+    let user = await User.findOne({ chatId: userId });
+    user.email = email;
+    await user.save();
+    res.json({ msg: "ok", user });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send(error.message);
+  }
+});
+
+router.post("/face", async (req, res) => {
+  const { userId } = req.query;
+  const { path } = req.body;
+  try {
+    let user = await User.findOne({ chatId: userId });
+    user.face = path;
+    await user.save();
+    res.json({ msg: "ok", user });
   } catch (error) {
     console.log(error);
     res.status(400).send(error.message);

@@ -4,8 +4,7 @@ const User = require("../models/User");
 const token = "7421425151:AAEGXwZkSO5MwPa4vVvBTtS8zM_uSBFfyZE";
 
 // anomcoin.online
-// const serverurl = "https://anomcoin.online";
-const serverurl = "https://fe0c-2a02-4780-2d-e242-00-1.ngrok-free.app";
+const serverurl = "https://15e8-185-12-142-237.ngrok-free.app";
 
 let bot = null;
 const botInit = () => {

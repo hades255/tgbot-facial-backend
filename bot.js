@@ -5,21 +5,20 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const morgan = require("morgan");
 
-//  127.0.0.1:3004/user/userId=7086461598&name=smart guy&username=z_sm_001&refer=
-
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(bodyParser.json());
 
 const userRouter = require("./routes/user");
+const faceRouter = require("./routes/face");
 const referralRouter = require("./routes/referral");
 const { botInit } = require("./routes/bot");
 
 //  todo
 const dbURI =
-  // "mongodb+srv://chaolongpiao:chaolong1995@cluster0.inglvcw.mongodb.net/tg_bot_alpcoin";
-  "mongodb://127.0.0.1:27017/alpcoin";
+  // "mongodb+srv://chaolongpiao:chaolong1995@cluster0.inglvcw.mongodb.net/tg_bot_facial";
+  "mongodb://127.0.0.1:27017/facial";
 mongoose
   .connect(dbURI)
   .then(() => console.log("MongoDB connected"))
@@ -34,10 +33,10 @@ app.use((req, res, next) => {
 });
 
 app.use("/user", userRouter);
+app.use("/face", faceRouter);
 app.use("/referral", referralRouter);
-app.use(
-  express.static(path.join(__dirname, "../tgbot-facial-frontend/build"))
-);
+
+app.use(express.static(path.join(__dirname, "../tgbot-facial-frontend/build")));
 
 app.use("/public", express.static(path.join(__dirname, "public")));
 
@@ -58,5 +57,5 @@ const port = process.env.PORT || 3006;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
   //  todo
-  botInit();
+  // botInit();
 });

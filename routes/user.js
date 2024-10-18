@@ -1,9 +1,6 @@
 const express = require("express");
 const User = require("../models/User");
 const { saveReferralCode, checkBonusStatus, getAvatar } = require("./bot");
-const { getTask } = require("../helpers/task");
-const { getCoin, updateCoin } = require("../helpers/coin");
-const { getProfile } = require("../controllers/user");
 
 const router = express.Router();
 
@@ -17,9 +14,8 @@ router.get("/", async (req, res) => {
     let updateFlag = false;
     if (refer && refer !== userId) {
       bonus = await saveReferralCode(userId, refer, user);
-    }
+    } else bonus = await checkBonusStatus(userId);
     if (user) {
-      bonus = await checkBonusStatus(userId);
       if (user.name !== name) {
         user.name = name;
         updateFlag = true;
@@ -34,9 +30,6 @@ router.get("/", async (req, res) => {
       }
       if (bonus) {
         user.point += bonus;
-        user.totalPoint += bonus;
-        user.dailyPoint += bonus;
-        user.weeklyPoint += bonus;
         updateFlag = true;
       }
       if (updateFlag) await user.save();
@@ -46,19 +39,10 @@ router.get("/", async (req, res) => {
         name,
         username,
         avatar,
-        point: bonus || 0,
+        point: bonus,
       }).save();
     }
-    const task = getTask(userId.toString());
-    const coin = getCoin(userId.toString(), user.boost);
-    res.json({
-      point: user.point,
-      user,
-      task,
-      otTasks: user.tasks,
-      coin,
-      bonus,
-    });
+    res.json({ user, bonus });
   } catch (error) {
     console.log(error);
     res.status(400).send(error.message);

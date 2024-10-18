@@ -7,6 +7,7 @@ const UserSchema = Schema({
   name: { type: String, required: true },
   username: { type: String, default: "" },
   avatar: { type: String, default: "" },
+  point: { type: Number, default: 0 },
 });
 
 const User = mongoose.model("User", UserSchema);

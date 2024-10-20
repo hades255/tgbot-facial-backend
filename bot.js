@@ -12,13 +12,16 @@ app.use(bodyParser.json());
 
 const userRouter = require("./routes/user");
 const faceRouter = require("./routes/face");
+const convertRouter = require("./routes/convert");
+const stakeRouter = require("./routes/stake");
 const referralRouter = require("./routes/referral");
 const { botInit } = require("./routes/bot");
+const { onCronStarter } = require("./helpers/cron");
 
 //  todo
 const dbURI =
-  // "mongodb+srv://chaolongpiao:chaolong1995@cluster0.inglvcw.mongodb.net/tg_bot_facial";
-  "mongodb://127.0.0.1:27017/facial";
+  "mongodb+srv://chaolongpiao:chaolong1995@cluster0.inglvcw.mongodb.net/tg_bot_facial";
+  // "mongodb://127.0.0.1:27017/facial";
 mongoose
   .connect(dbURI)
   .then(() => console.log("MongoDB connected"))
@@ -34,6 +37,8 @@ app.use((req, res, next) => {
 
 app.use("/user", userRouter);
 app.use("/face", faceRouter);
+app.use("/convert", convertRouter);
+app.use("/stake", stakeRouter);
 app.use("/referral", referralRouter);
 
 app.use(express.static(path.join(__dirname, "../tgbot-facial-frontend/build")));
@@ -57,5 +62,6 @@ const port = process.env.PORT || 3004;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
   //  todo
-  // botInit();
+  botInit();
+  onCronStarter();
 });

@@ -11,6 +11,7 @@ const UserSchema = Schema({
   face: { type: String, default: "" },
   point: { type: Number, default: 0 },
   token: { type: Number, default: 0 },
+  code: { type: String, default: "xxxx" },
 });
 
 const User = mongoose.model("User", UserSchema);

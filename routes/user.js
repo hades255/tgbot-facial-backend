@@ -1,6 +1,7 @@
 const express = require("express");
 const User = require("../models/User");
 const { saveReferralCode, checkBonusStatus, getAvatar } = require("./bot");
+const { generateRandomCode } = require("../helpers/func");
 
 const router = express.Router();
 
@@ -63,11 +64,31 @@ router.get("/avatar", async (req, res) => {
 router.post("/email", async (req, res) => {
   const { userId } = req.query;
   const { email } = req.body;
+  const code = generateRandomCode();
   try {
     let user = await User.findOne({ chatId: userId });
+    user.code = code;
+    await user.save();
+    res.json({ msg: "ok" });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send(error.message);
+  }
+});
+
+router.post("/confirmemail", async (req, res) => {
+  const { userId } = req.query;
+  const { email, code } = req.body;
+  try {
+    let user = await User.findOne({ chatId: userId });
+    if (code !== user.code) {
+      res.status(400).send({ message: "wrong code" });
+      return;
+    }
+    user.code = "xxxx";
     user.email = email;
     await user.save();
-    res.json({ msg: "ok", user });
+    res.json({ msg: "ok" });
   } catch (error) {
     console.log(error);
     res.status(400).send(error.message);

@@ -1,14 +1,14 @@
 const express = require("express");
-const { updateUser } = require("../controllers/notification");
 const Notification = require("../models/Notification");
-const { sendMsgFromBot } = require("./bot");
+const { sendReferNotification } = require("./bot");
 const router = express.Router();
 
 router.post("/", async (req, res) => {
   const { userId } = req.query;
   try {
-    const message = `<div class="flex flex-col"><div class="text-sm"><b>Smart Guy</b> accepts your invitation.</div><div class="text-xs">You get 5000 bonus $SELFIEs!</div></div>`;
-    sendMsgFromBot(userId, message);
+    await sendReferNotification(userId, 50, { name: "Smart Guy" });
+    const message = `<b>$Smart Guy</b> accepts your invitation.
+        <i>You get 50 bonus $SELFIEs!</i>`;
     await new Notification({
       userId,
       message,
@@ -36,7 +36,6 @@ router.get("/", async (req, res) => {
 router.get("/check", async (req, res) => {
   const { userId } = req.query;
   try {
-    updateUser(userId);
     const notifications = await Notification.find({ userId, status: 0 });
     res.status(200).send(notifications);
   } catch (error) {

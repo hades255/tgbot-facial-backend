@@ -1,7 +1,7 @@
 const TelegramBot = require("node-telegram-bot-api");
 const Referral = require("../models/Referral");
 const User = require("../models/User");
-const { sendReferNotification } = require("../controllers/notification");
+const Notification = require("../models/Notification");
 const token = "7421425151:AAEGXwZkSO5MwPa4vVvBTtS8zM_uSBFfyZE";
 
 // anomcoin.online
@@ -58,9 +58,9 @@ const botInit = () => {
   });
 };
 
-const sendMsgFromBot = async (userId, message) => {
-  try {
-    const webAppUrl = `${serverurl}`;
+const sendMsgViaBot = (userId, message) => {
+  const webAppUrl = `${serverurl}`;
+  if (bot) {
     bot.sendMessage(userId, message, {
       parse_mode: "HTML",
       reply_markup: {
@@ -76,6 +76,19 @@ const sendMsgFromBot = async (userId, message) => {
         ],
       },
     });
+  }
+};
+
+const sendReferNotification = async (userId, bonus, referrer) => {
+  try {
+    const tgmsg = `<b>${referrer.name}</b> accepts your invitation.
+        <i>You get ${bonus} bonus $SELFIEs!</i>`;
+    sendMsgViaBot(userId, tgmsg);
+    const message = `<div class="flex flex-col"><div class="text-sm"><b>${referrer.name}</b> accepts your invitation.</div><div class="text-xs">You get ${bonus} bonus $SELFIEs!</div></div>`;
+    await new Notification({
+      userId,
+      message,
+    }).save();
   } catch (error) {
     console.log(error);
   }
@@ -146,11 +159,13 @@ const isValidBotUsername = async (username) => {
 const BOT = () => bot;
 
 module.exports = {
+  sendMsgViaBot,
   saveReferralCode,
   token,
   getAvatar,
   botInit,
   isValidBotUsername,
   BOT,
-  sendMsgFromBot,
+  serverurl,
+  sendReferNotification,
 };

@@ -1,6 +1,7 @@
 const TelegramBot = require("node-telegram-bot-api");
 const Referral = require("../models/Referral");
 const User = require("../models/User");
+const { sendReferNotification } = require("../controllers/notification");
 const token = "7421425151:AAEGXwZkSO5MwPa4vVvBTtS8zM_uSBFfyZE";
 
 // anomcoin.online
@@ -57,6 +58,29 @@ const botInit = () => {
   });
 };
 
+const sendMsgFromBot = async (userId, message) => {
+  try {
+    const webAppUrl = `${serverurl}`;
+    bot.sendMessage(userId, message, {
+      parse_mode: "HTML",
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: "GoApp",
+              web_app: {
+                url: webAppUrl,
+              },
+            },
+          ],
+        ],
+      },
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const saveReferralCode = async (userId, referralCode, user) => {
   try {
     const referrer = await User.findOne({ chatId: referralCode });
@@ -66,64 +90,23 @@ const saveReferralCode = async (userId, referralCode, user) => {
         userId,
       });
       if (oldref) return null;
-      let bonuscase = true;
-      let bonuscase5k = false;
       const sendRef = await Referral.findOne({
         userId: referralCode,
         code: userId,
       });
-      if (sendRef) return null; //bonuscase = false;
-      if (bonuscase) {
-        const oldrefCounts = await Referral.countDocuments({
-          code: referralCode,
-        });
-        if (oldrefCounts < 5) bonuscase5k = true;
-      }
-      let bonus = 0;
-      if (bonuscase) {
-        const point = user ? user.point : 0;
-        bonus =
-          (bonuscase5k ? 5000 : 0) +
-          (point > 100000 ? 10000 : Math.round(point / 10));
-      }
+      if (sendRef) return null;
+      let bonus = 50;
       await new Referral({
         code: referralCode,
         sender: referrer._id,
         userId,
         receiver: user._id,
         bonus,
-        status: bonuscase5k,
       }).save();
+      sendReferNotification(referralCode, bonus, referrer);
       return null;
     }
     return null;
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-};
-
-const checkBonusStatus = async (userId) => {
-  try {
-    const refers = await Referral.find({ code: userId });
-
-    let newBonus = 0;
-    for (i = 0; i < refers.length; i++) {
-      const refer = refers[i];
-      const referrer = await User.findOne({ chatId: refer.userId });
-      if (referrer) {
-        const bonus =
-          (refer.status ? 5000 : 0) +
-          (referrer.point > 100000 ? 10000 : Math.round(referrer.point / 10));
-        const diff = bonus - (refer.read ? refer.bonus : 0);
-        newBonus += diff > 0 ? diff : 0;
-        await Referral.updateOne(
-          { code: userId, userId: refer.userId },
-          { bonus, read: true }
-        );
-      }
-    }
-    return newBonus;
   } catch (error) {
     console.log(error);
     throw error;
@@ -160,11 +143,14 @@ const isValidBotUsername = async (username) => {
   }
 };
 
+const BOT = () => bot;
+
 module.exports = {
   saveReferralCode,
-  checkBonusStatus,
   token,
   getAvatar,
   botInit,
   isValidBotUsername,
+  BOT,
+  sendMsgFromBot,
 };

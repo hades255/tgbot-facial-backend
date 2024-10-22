@@ -1,5 +1,6 @@
 const Stake = require("../models/Stake");
 const User = require("../models/User");
+const { sendStakeNotification } = require("./notification");
 
 const dailyStakeUpdater = async () => {
   try {
@@ -18,6 +19,11 @@ const dailyStakeUpdater = async () => {
             },
           },
           { new: true }
+        );
+        sendStakeNotification(
+          stake.userId,
+          stake.amount * stake.profit,
+          stake.unit ? "token" : "point"
         );
       }
     });

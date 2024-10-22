@@ -15,6 +15,7 @@ const faceRouter = require("./routes/face");
 const convertRouter = require("./routes/convert");
 const stakeRouter = require("./routes/stake");
 const referralRouter = require("./routes/referral");
+const notificationRouter = require("./routes/notification");
 const { botInit } = require("./routes/bot");
 const { onCronStarter } = require("./helpers/cron");
 
@@ -40,6 +41,7 @@ app.use("/face", faceRouter);
 app.use("/convert", convertRouter);
 app.use("/stake", stakeRouter);
 app.use("/referral", referralRouter);
+app.use("/notification", notificationRouter);
 
 app.use(express.static(path.join(__dirname, "../tgbot-facial-frontend/build")));
 

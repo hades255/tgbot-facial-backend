@@ -1,6 +1,6 @@
 const express = require("express");
 const User = require("../models/User");
-const { saveReferralCode, checkBonusStatus, getAvatar } = require("./bot");
+const { saveReferralCode, getAvatar } = require("./bot");
 const { generateRandomCode } = require("../helpers/func");
 
 const router = express.Router();
@@ -15,7 +15,7 @@ router.get("/", async (req, res) => {
     let updateFlag = false;
     if (refer && refer !== userId) {
       bonus = await saveReferralCode(userId, refer, user);
-    } else bonus = await checkBonusStatus(userId);
+    }
     if (user) {
       if (user.name !== name) {
         user.name = name;

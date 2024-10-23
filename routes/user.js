@@ -67,10 +67,11 @@ router.post("/email", async (req, res) => {
   const code = generateRandomCode();
   try {
     await transporter.sendMail({
-      from: "montgasam@gmail.com",
+      from: `"selfieai" <MS_erP0vn@trial-z86org8wp1ngew13.mlsender.net>`,
       to: email,
-      subject: "Verification Code",
-      text: code,
+      subject: "Selfie AI",
+      text: `Your verification code is ${code}`,
+      html: `<h1>Your verification code is <i>${code}</i></h1>`,
     });
     let user = await User.findOne({ chatId: userId });
     user.code = code;

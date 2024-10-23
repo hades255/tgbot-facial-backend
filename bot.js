@@ -6,7 +6,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const path = require("path");
 const morgan = require("morgan");
-const AWS = require("./awsConfig");
+require("./config");
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));

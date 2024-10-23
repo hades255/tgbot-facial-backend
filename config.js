@@ -6,7 +6,4 @@ AWS.config.update({
   region: process.env.AWS_REGION,
 });
 
-const rekognition = new AWS.Rekognition();
-const s3 = new AWS.S3();
-
-module.exports = { rekognition, s3 };
+module.exports = AWS;

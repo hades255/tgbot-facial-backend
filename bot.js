@@ -6,6 +6,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const path = require("path");
 const morgan = require("morgan");
+const AWS = require("./awsConfig");
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
@@ -25,7 +26,7 @@ const { onCronStarter } = require("./helpers/cron");
 //  todo
 const dbURI =
   "mongodb+srv://chaolongpiao:chaolong1995@cluster0.inglvcw.mongodb.net/tg_bot_facial";
-  // "mongodb://127.0.0.1:27017/facial";
+// "mongodb://127.0.0.1:27017/facial";
 mongoose
   .connect(dbURI)
   .then(() => console.log("MongoDB connected"))

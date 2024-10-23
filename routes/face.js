@@ -2,11 +2,16 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const fs = require("fs");
-const { rekognition, s3 } = require("../config");
 const upload = multer({ dest: "public/uploads/" });
+const {
+  RekognitionClient,
+  DetectFacesCommand,
+} = require("@aws-sdk/client-rekognition");
 
 const verifyImage = async (filePath) => {
   const image = fs.readFileSync(filePath);
+  const rekognitionClient = new RekognitionClient({ region: "us-east-1" });
+
   const params = {
     Image: {
       Bytes: image,
@@ -14,7 +19,7 @@ const verifyImage = async (filePath) => {
   };
 
   try {
-    const response = await rekognition.detectFaces(params).promise();
+    const response = await rekognitionClient.send(new DetectFacesCommand(params));
     return response.FaceDetails.length > 0;
   } catch (error) {
     console.error(error);

@@ -1,4 +1,6 @@
 const express = require("express");
+const dotenv = require("dotenv");
+dotenv.config();
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
@@ -12,6 +14,7 @@ app.use(bodyParser.json());
 
 const userRouter = require("./routes/user");
 const faceRouter = require("./routes/face");
+const oauthRouter = require("./routes/oauth");
 const convertRouter = require("./routes/convert");
 const stakeRouter = require("./routes/stake");
 const referralRouter = require("./routes/referral");
@@ -38,6 +41,7 @@ app.use((req, res, next) => {
 
 app.use("/user", userRouter);
 app.use("/face", faceRouter);
+app.use("/oauth", oauthRouter);
 app.use("/convert", convertRouter);
 app.use("/stake", stakeRouter);
 app.use("/referral", referralRouter);

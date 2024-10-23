@@ -1,7 +1,7 @@
 const express = require("express");
 const User = require("../models/User");
 const { saveReferralCode, getAvatar } = require("./bot");
-const { generateRandomCode } = require("../helpers/func");
+const { generateRandomCode, transporter } = require("../helpers/func");
 
 const router = express.Router();
 
@@ -66,6 +66,12 @@ router.post("/email", async (req, res) => {
   const { email } = req.body;
   const code = generateRandomCode();
   try {
+    await transporter.sendMail({
+      from: "montgasam@gmail.com",
+      to: email,
+      subject: "Verification Code",
+      text: code,
+    });
     let user = await User.findOne({ chatId: userId });
     user.code = code;
     await user.save();

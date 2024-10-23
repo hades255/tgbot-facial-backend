@@ -1,3 +1,5 @@
+const nodemailer = require("nodemailer");
+
 const dateDiffInSeconds = (date1, date2) =>
   Math.abs(date1.getTime() - date2.getTime()) / 1000;
 
@@ -24,10 +26,21 @@ const generateRandomCode = () => {
   return result;
 };
 
+const transporter = nodemailer.createTransport({
+  host: "smtp.mailersend.net",
+  port: 587,
+  secure: true,
+  auth: {
+    user: "MS_erP0vn@trial-z86org8wp1ngew13.mlsender.net",
+    pass: "85ih0OL9uvaB4Nh4",
+  },
+});
+
 module.exports = {
   dateDiffInSeconds,
   dateDiffInHours,
   dateDiffInMins,
   getLastSegment,
   generateRandomCode,
+  transporter,
 };

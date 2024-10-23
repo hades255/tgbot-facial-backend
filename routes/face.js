@@ -80,7 +80,7 @@ router.get("/verify", async (req, res) => {
   try {
     const isValidImage = await verifyImage(path);
     if (isValidImage) {
-      res.status(200).send({ message: "Image verified successfully", file });
+      res.status(200).send({ message: "Image verified successfully", path });
     } else {
       res.status(400).send({ message: "Invalid image, no face detected" });
     }

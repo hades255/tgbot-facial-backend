@@ -2,6 +2,7 @@ const express = require("express");
 const User = require("../models/User");
 const { saveReferralCode, getAvatar } = require("./bot");
 const { generateRandomCode, transporter } = require("../helpers/func");
+const { sendFaceUploadNotification } = require("../controllers/notification");
 
 const router = express.Router();
 
@@ -66,13 +67,15 @@ router.post("/email", async (req, res) => {
   const { email } = req.body;
   const code = generateRandomCode();
   try {
-    await transporter.sendMail({
-      from: `"selfieai" <MS_erP0vn@trial-z86org8wp1ngew13.mlsender.net>`,
-      to: email,
-      subject: "Selfie AI",
-      text: `Your verification code is ${code}`,
-      html: `<h1>Your verification code is <i>${code}</i></h1>`,
-    });
+    if (process.env.mode === "prod") {
+      await transporter.sendMail({
+        from: `"selfieai" <MS_erP0vn@trial-z86org8wp1ngew13.mlsender.net>`,
+        to: email,
+        subject: "Selfie AI",
+        text: `Your verification code is ${code}`,
+        html: `<h1>Your verification code is <i>${code}</i></h1>`,
+      });
+    }
     let user = await User.findOne({ chatId: userId });
     user.code = code;
     await user.save();
@@ -108,8 +111,10 @@ router.post("/face", async (req, res) => {
   try {
     let user = await User.findOne({ chatId: userId });
     user.face = path;
+    user.point += 20;
     await user.save();
-    res.json({ msg: "ok", user });
+    sendFaceUploadNotification(userId, 20);
+    res.json({ msg: "ok", point: user.point });
   } catch (error) {
     console.log(error);
     res.status(400).send(error.message);

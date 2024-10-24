@@ -19,8 +19,10 @@ const verifyImage = async (filePath) => {
   };
 
   try {
-    const response = await rekognitionClient.send(new DetectFacesCommand(params));
-    return response.FaceDetails.length > 0;
+    const response = await rekognitionClient.send(
+      new DetectFacesCommand(params)
+    );
+    return response.FaceDetails;
   } catch (error) {
     console.error(error);
     return false;
@@ -81,11 +83,12 @@ router.post("/upload", upload.single("image"), async (req, res) => {
 
 router.get("/verify", async (req, res) => {
   const { path } = req.query;
-  console.log(path);
   try {
-    const isValidImage = await verifyImage(path);
-    if (isValidImage) {
-      res.status(200).send({ message: "Image verified successfully", path });
+    const FaceDetails = await verifyImage(path);
+    if (FaceDetails.length) {
+      res
+        .status(200)
+        .send({ message: "Image verified successfully", FaceDetails:FaceDetails[0] });
     } else {
       res.status(400).send({ message: "Invalid image, no face detected" });
     }

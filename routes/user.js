@@ -67,15 +67,15 @@ router.post("/email", async (req, res) => {
   const { email } = req.body;
   const code = generateRandomCode();
   try {
-    if (process.env.mode === "prod") {
-      await transporter.sendMail({
-        from: `"selfieai" <MS_erP0vn@trial-z86org8wp1ngew13.mlsender.net>`,
-        to: email,
-        subject: "Selfie AI",
-        text: `Your verification code is ${code}`,
-        html: `<h1>Your verification code is <i>${code}</i></h1>`,
-      });
-    }
+    // if (process.env.mode === "prod") {
+    //   await transporter.sendMail({
+    //     from: `"selfieai" <MS_erP0vn@trial-z86org8wp1ngew13.mlsender.net>`,
+    //     to: email,
+    //     subject: "Selfie AI",
+    //     text: `Your verification code is ${code}`,
+    //     html: `<h1>Your verification code is <i>${code}</i></h1>`,
+    //   });
+    // }
     let user = await User.findOne({ chatId: userId });
     user.code = code;
     await user.save();
